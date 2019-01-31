@@ -1,9 +1,22 @@
 #!/usr/bin/env bash
+# ------------------------------------------------------------------
+# Author: Tony Benoy
+#Script for automating the scaffolding and creating the repository in BitBucket with ease
+#Works with Odoo 10.0,11.0,12.0
+# ------------------------------------------------------------------
+
+#Path to odoo-bin(All versions work as scaffoling is common for all)
 odoobin=""
+#Generate and app password fromhttps://bitbucket.org/account/user/$username/app-passwords
 apppass=""
+#BitBucket Username
 username=""
+#Project Name
 project=""
+#Default addons path if any
 addonpath=""
+#Get project key from https://bitbucket.org/$username/profile/projects
+projkey=""
 if [ -z "$2" ]
   then
     echo "Using Default addon path"
@@ -45,8 +58,8 @@ cat >"$addonpath"/"$1"/__manifest__.py <<EOL
         Long description of module's purpose
     """,
 
-    'author': "TechNeith",
-    'website': "https://techneith.com",
+    'author': "Tony",
+    'website': "https://tonybenoy.com",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/12.0/odoo/addons/base/data/ir_module_category_data.xml
@@ -69,10 +82,11 @@ cat >"$addonpath"/"$1"/__manifest__.py <<EOL
     ],
 }
 EOL
-curl -X POST  -u "$username":"$apppass" "https://api.bitbucket.org/2.0/repositories/"$project"/"$1"" -H "Content-Type: application/json"  -d '{"has_wiki": true, "is_private": true, "project": {"key": "TEC"}}'
+curl -X POST  -u "$username":"$apppass" "https://api.bitbucket.org/2.0/repositories/"$project"/"$1"" -H "Content-Type: application/json"  -d '{"has_wiki": true, "is_private": true, "project": {"key":"$projkey"}}'
 cd "$addonpath"/"$1"
 git init
 git add .
 git commit -m "Initial Commit"
 git remote add origin git@bitbucket.org:$project/$1.git
 git push -u origin master
+echo "All Done. See your repo at https://bitbucket.org/$project/$1"
