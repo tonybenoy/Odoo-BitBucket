@@ -6,7 +6,7 @@
 # ------------------------------------------------------------------
 
 #Path to odoo-bin(All versions work as scaffoling is common for all)
-odoobin=""
+odoobin="./odoo-bin"
 #Generate and app password fromhttps://bitbucket.org/account/user/$username/app-passwords
 apppass=""
 #BitBucket Username
@@ -17,13 +17,26 @@ project=""
 addonpath=""
 #Get project key from https://bitbucket.org/$username/profile/projects
 projkey=""
+#Python Environment to use
+pyenv=""
+companyname="tonybenoy"
+companyurl="https://tonybenoy.com"
 if [ -z "$2" ]
   then
     echo "Using Default addon path"
 else
     addonpath=$2
 fi
-$odoobin scaffold "$1" "$addonpath" 
+
+if [ -z "$2" ]
+  then
+    $odoobin scaffold "$1" "$addonpath"
+    echo "Using Default python"
+else
+    source pyenv/bin/deactivate
+    $odoobin scaffold "$1" "$addonpath"
+    deactivate
+fi 
 cd "$addonpath"/"$1"
 cat >"$addonpath"/"$1"/.gitignore <<EOL
 # Byte-compiled / optimized / DLL files
@@ -158,15 +171,15 @@ cat >"$addonpath"/"$1"/__manifest__.py <<EOL
         Long description of module's purpose
     """,
 
-    'author': "Tony",
-    'website': "https://tonybenoy.com",
+    'author': "$company",
+    'website': "$companyurl",
 
     # Categories can be used to filter modules in modules listing
     # Check https://github.com/odoo/odoo/blob/12.0/odoo/addons/base/data/ir_module_category_data.xml
     # for the full list
     'category': 'Uncategorized',
     'version': '0.1',
-    app
+    'applications' : True
     # any module necessary for this one to work correctly
     'depends': ['base'],
 
@@ -182,7 +195,7 @@ cat >"$addonpath"/"$1"/__manifest__.py <<EOL
     ],
 }
 EOL
-curl -X POST  -u "$username":"$apppass" "https://api.bitbucket.org/2.0/repositories/"$project"/"$1"" -H "Content-Type: application/json"  -d '{"has_wiki": true, "is_private": true, "project": {"key":"$projkey"}}'
+curl -X POST -v  -u "$username":"$apppass" "https://api.bitbucket.org/2.0/repositories/"$project"/"$1"" -H "Content-Type: application/json"  -d "{\"has_wiki\": true, \"is_private\": true, \"project\": {\"key\": \""$projkey"\"}}"
 cd "$addonpath"/"$1"
 git init
 git add .
