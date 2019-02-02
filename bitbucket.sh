@@ -168,7 +168,7 @@ cat >"$addonpath"/"$1"/__manifest__.py <<EOL
         Long description of module's purpose
     """,
 
-    'author': "$company",
+    'author': "$companyname",
     'website': "$companyurl",
 
     # Categories can be used to filter modules in modules listing
@@ -192,7 +192,7 @@ cat >"$addonpath"/"$1"/__manifest__.py <<EOL
     ],
 }
 EOL
-curl -X POST -v  -u "$username":"$apppass" "https://api.bitbucket.org/2.0/repositories/"$project"/"$1"" -H "Content-Type: application/json"  -d "{\"has_wiki\": true, \"is_private\": true, \"project\": {\"key\": \""$projkey"\"}}"
+curl -X POST -u "$username":"$apppass" "https://api.bitbucket.org/2.0/repositories/"$project"/"$1"" -H "Content-Type: application/json"  -d "{\"has_wiki\": true, \"is_private\": true, \"project\": {\"key\": \""$projkey"\"}}"
 cd "$addonpath"/"$1"
 git init
 git add .
