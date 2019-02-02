@@ -19,7 +19,9 @@ addonpath=""
 projkey=""
 #Python Environment to use
 pyenv=""
-companyname="tonybenoy"
+#Company Name for Manifest
+companyname="tonybenoy"i
+#Company Url For Manifest
 companyurl="https://tonybenoy.com"
 if [ -z "$2" ]
   then
@@ -27,16 +29,11 @@ if [ -z "$2" ]
 else
     addonpath=$2
 fi
+source $pyenv/bin/activate
+$odoobin scaffold "$1" "$addonpath"
+deactivate
+$odoobin scaffold "$1" "$addonpath"
 
-if [ -z "$2" ]
-  then
-    $odoobin scaffold "$1" "$addonpath"
-    echo "Using Default python"
-else
-    source pyenv/bin/deactivate
-    $odoobin scaffold "$1" "$addonpath"
-    deactivate
-fi 
 cd "$addonpath"/"$1"
 cat >"$addonpath"/"$1"/.gitignore <<EOL
 # Byte-compiled / optimized / DLL files
