@@ -29,6 +29,10 @@ if [ -z "$2" ]
 else
     addonpath=$2
 fi
+if [ -d "$addonpath""$$1" ]; then
+    echo "Addon Exists"
+    exit 1
+fi
 source $pyenv/bin/activate
 $odoobin scaffold "$1" "$addonpath"
 deactivate
@@ -199,4 +203,7 @@ git add .
 git commit -m "Initial Commit"
 git remote add origin git@bitbucket.org:$project/$1.git
 git push -u origin master
+echo "___________________________________________________________________________________________________________"
 echo "All Done. See your repo at https://bitbucket.org/$project/$1"
+echo "Module $1 created at $addonpath$1"
+exit 0
